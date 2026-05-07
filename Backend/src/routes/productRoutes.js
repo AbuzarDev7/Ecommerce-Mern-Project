@@ -9,7 +9,9 @@ const {
 } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-router.route('/').get(getProducts).post(protect, admin, createProduct);
+const { upload } = require('../config/cloudinary');
+
+router.route('/').get(getProducts).post(protect, admin, upload.single('image'), createProduct);
 router
     .route('/:id')
     .get(getProductById)

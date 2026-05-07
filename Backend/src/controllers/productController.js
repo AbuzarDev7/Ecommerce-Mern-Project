@@ -1,17 +1,18 @@
 const Product = require('../models/Product');
+const asyncHandler = require('express-async-handler');
 
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
-const getProducts = async (req, res) => {
+const getProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({});
     res.json(products);
-};
+});
 
 // @desc    Fetch single product
 // @route   GET /api/products/:id
 // @access  Public
-const getProductById = async (req, res) => {
+const getProductById = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -20,12 +21,12 @@ const getProductById = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Delete a product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
-const deleteProduct = async (req, res) => {
+const deleteProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -35,13 +36,21 @@ const deleteProduct = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Create a product
 // @route   POST /api/products
 // @access  Private/Admin
-const createProduct = async (req, res) => {
-    const { title, price, description, imageUrl, category, stock } = req.body;
+const createProduct = asyncHandler(async (req, res) => {
+    const { title, price, description, category, stock } = req.body;
+    
+    // Get image URL from Cloudinary (Multer-Cloudinary adds 'path' to req.file)
+    const imageUrl = req.file ? req.file.path : req.body.imageUrl;
+
+    if (!title || !price || !description || !category || !stock) {
+        res.status(400);
+        throw new Error('Please add all required fields');
+    }
 
     const product = new Product({
         title,
@@ -55,12 +64,12 @@ const createProduct = async (req, res) => {
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
-};
+});
 
 // @desc    Update a product
 // @route   PUT /api/products/:id
 // @access  Private/Admin
-const updateProduct = async (req, res) => {
+const updateProduct = asyncHandler(async (req, res) => {
     const { title, price, description, imageUrl, category, stock } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -79,7 +88,7 @@ const updateProduct = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 module.exports = {
     getProducts,

@@ -1,16 +1,22 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
+const asyncHandler = require('express-async-handler');
 
 // @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
-const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+const registerUser = asyncHandler(async (req, res) => {
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
         res.status(400);
         throw new Error('Please add all fields');
+    }
+
+    if (password.length < 6) {
+        res.status(400);
+        throw new Error('Password must be at least 6 characters');
     }
 
     const userExists = await User.findOne({ email });
@@ -23,7 +29,8 @@ const registerUser = async (req, res) => {
     const user = await User.create({
         name,
         email,
-        password
+        password,
+        role: role || 'user'
     });
 
     if (user) {
@@ -46,13 +53,18 @@ const registerUser = async (req, res) => {
         res.status(400);
         throw new Error('Invalid user data');
     }
-};
+});
 
 // @desc    Authenticate a user
 // @route   POST /api/auth/login
 // @access  Public
-const loginUser = async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+        res.status(400);
+        throw new Error('Please provide email and password');
+    }
 
     const user = await User.findOne({ email }).select('+password');
 
@@ -62,26 +74,27 @@ const loginUser = async (req, res) => {
         res.status(401);
         throw new Error('Invalid credentials');
     }
-};
+});
 
 // @desc    Get user data
 // @route   GET /api/auth/me
 // @access  Private
-const getMe = async (req, res) => {
-    res.status(200).json(req.user);
-};
+const getMe = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    res.status(200).json(user);
+});
 
 // @desc    Logout user / clear cookie
 // @route   GET /api/auth/logout
 // @access  Private
-const logout = async (req, res) => {
+const logout = asyncHandler(async (req, res) => {
     res.cookie('token', 'none', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     });
 
     res.status(200).json({ success: true, data: {} });
-};
+});
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
