@@ -9,6 +9,14 @@ const getProducts = asyncHandler(async (req, res) => {
     res.json(products);
 });
 
+// @desc    Fetch products by logged in user
+// @route   GET /api/products/my
+// @access  Private/Admin
+const getMyProducts = asyncHandler(async (req, res) => {
+    const products = await Product.find({ user: req.user._id });
+    res.json(products);
+});
+
 // @desc    Fetch single product
 // @route   GET /api/products/:id
 // @access  Public
@@ -92,6 +100,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 module.exports = {
     getProducts,
+    getMyProducts,
     getProductById,
     deleteProduct,
     createProduct,

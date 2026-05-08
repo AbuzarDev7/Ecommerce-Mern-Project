@@ -2,18 +2,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
+import useCartStore from '../store/useCartStore';
 import toast from 'react-hot-toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, loading } = useAuthStore();
+  const { fetchCart } = useCartStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const user = await login(email, password);
+      await fetchCart();
       toast.success('Login Successful!');
       
       if (user.role === 'admin') {

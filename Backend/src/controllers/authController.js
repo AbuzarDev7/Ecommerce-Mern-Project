@@ -48,7 +48,16 @@ const registerUser = asyncHandler(async (req, res) => {
             // Don't fail the registration if email fails, but log it
         }
 
-        sendTokenResponse(user, 201, res);
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully. Please login.',
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
     } else {
         res.status(400);
         throw new Error('Invalid user data');
@@ -123,9 +132,80 @@ const sendTokenResponse = (user, statusCode, res) => {
         });
 };
 
+// @desc    Forgot password
+// @route   POST /api/auth/forgotpassword
+// @access  Public
+const forgotPassword = asyncHandler(async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+        res.status(404);
+        throw new Error('There is no user with that email');
+    }
+
+    // Get reset token
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    // Create reset URL
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/auth/resetpassword/${resetToken}`;
+
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Password reset token',
+            message
+        });
+
+        res.status(200).json({ success: true, data: 'Email sent' });
+    } catch (err) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save({ validateBeforeSave: false });
+
+        res.status(500);
+        throw new Error('Email could not be sent');
+    }
+});
+
+// @desc    Reset password
+// @route   PUT /api/auth/resetpassword/:resettoken
+// @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+    // Get hashed token
+    const resetPasswordToken = require('crypto')
+        .createHash('sha256')
+        .update(req.params.resettoken)
+        .digest('hex');
+
+    const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        res.status(400);
+        throw new Error('Invalid token');
+    }
+
+    // Set new password
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+});
+
 module.exports = {
     registerUser,
     loginUser,
     getMe,
-    logout
+    logout,
+    forgotPassword,
+    resetPassword
 };

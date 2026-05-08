@@ -20,14 +20,9 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = await register(formData);
-      toast.success('Account Created Successfully!');
-      
-      if (user.role === 'admin') {
-        navigate('/admin/products');
-      } else {
-        navigate('/');
-      }
+      await register(formData);
+      toast.success('Account Created Successfully! Please login.');
+      navigate('/login');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');
     }

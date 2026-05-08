@@ -1,8 +1,6 @@
 const Order = require('../models/Order');
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private
+
 const addOrderItems = async (req, res) => {
     const {
         orderItems,

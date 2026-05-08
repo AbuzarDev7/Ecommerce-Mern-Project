@@ -5,7 +5,7 @@ import api from '../api';
 import toast from 'react-hot-toast';
 
 const AdminProducts = () => {
-  const { products, fetchProducts, loading: storeLoading } = useProductStore();
+  const { products, fetchMyProducts, loading: storeLoading } = useProductStore();
   const [showModal, setShowModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -19,8 +19,8 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchMyProducts();
+  }, [fetchMyProducts]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -57,7 +57,7 @@ const AdminProducts = () => {
       toast.success('Product created successfully!');
       setShowModal(false);
       resetForm();
-      fetchProducts();
+      fetchMyProducts();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create product');
     } finally {
@@ -76,7 +76,7 @@ const AdminProducts = () => {
       try {
         await api.delete(`/products/${id}`);
         toast.success('Product deleted');
-        fetchProducts();
+        fetchMyProducts();
       } catch (err) {
         toast.error('Delete failed');
       }

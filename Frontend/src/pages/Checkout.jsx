@@ -1,24 +1,70 @@
 import React, { useState } from 'react';
-import { CheckCircle, CreditCard, ShieldCheck, ArrowLeft, Printer, ShoppingBag, Download } from 'lucide-react';
+import { CheckCircle, CreditCard, ShieldCheck, ArrowLeft, ArrowRight, Printer, ShoppingBag, Download } from 'lucide-react';
 import useCartStore from '../store/useCartStore';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import api from '../api';
 
 const Checkout = () => {
   const { cart, getTotal, clearCart } = useCartStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [orderId] = useState(`ORD-${Math.floor(Math.random() * 1000000)}`);
+  const [orderId, setOrderId] = useState('');
+  const [shippingAddress, setShippingAddress] = useState({
+    firstName: '',
+    lastName: '',
+    address: '',
+    city: '',
+    postalCode: ''
+  });
   const navigate = useNavigate();
 
-  const handlePayment = () => {
+  const handleInputChange = (e) => {
+    setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
+  };
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    
+    if (!shippingAddress.address || !shippingAddress.city) {
+      toast.error('Please fill in shipping details');
+      return;
+    }
+
     setIsProcessing(true);
-    // Simulate fake payment delay
-    setTimeout(() => {
+    
+    try {
+      // Simulate fake payment delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const orderData = {
+        orderItems: cart.map(item => ({
+          title: item.title,
+          qty: item.quantity,
+          image: item.imageUrl,
+          price: item.price,
+          product: item._id
+        })),
+        shippingAddress: {
+          address: shippingAddress.address,
+          city: shippingAddress.city,
+          postalCode: shippingAddress.postalCode,
+          country: 'Pakistan' // Default or add field
+        },
+        paymentMethod: 'Credit Card (Simulated)',
+        totalPrice: getTotal()
+      };
+
+      const { data } = await api.post('/orders', orderData);
+      
+      setOrderId(data._id);
       setIsProcessing(false);
       setIsSuccess(true);
       toast.success('Payment Successful!');
-    }, 3000);
+    } catch (err) {
+      toast.error('Order creation failed');
+      setIsProcessing(false);
+    }
   };
 
   const handlePrint = () => {
@@ -127,11 +173,46 @@ const Checkout = () => {
                 Shipping Details
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="First Name" className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" />
-                <input type="text" placeholder="Last Name" className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" />
-                <input type="text" placeholder="Address" className="col-span-2 p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" />
-                <input type="text" placeholder="City" className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" />
-                <input type="text" placeholder="Postal Code" className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" />
+                <input 
+                  type="text" 
+                  name="firstName"
+                  value={shippingAddress.firstName}
+                  onChange={handleInputChange}
+                  placeholder="First Name" 
+                  className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" 
+                />
+                <input 
+                  type="text" 
+                  name="lastName"
+                  value={shippingAddress.lastName}
+                  onChange={handleInputChange}
+                  placeholder="Last Name" 
+                  className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" 
+                />
+                <input 
+                  type="text" 
+                  name="address"
+                  value={shippingAddress.address}
+                  onChange={handleInputChange}
+                  placeholder="Address" 
+                  className="col-span-2 p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" 
+                />
+                <input 
+                  type="text" 
+                  name="city"
+                  value={shippingAddress.city}
+                  onChange={handleInputChange}
+                  placeholder="City" 
+                  className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" 
+                />
+                <input 
+                  type="text" 
+                  name="postalCode"
+                  value={shippingAddress.postalCode}
+                  onChange={handleInputChange}
+                  placeholder="Postal Code" 
+                  className="p-4 bg-neutral-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-brand" 
+                />
               </div>
             </section>
 

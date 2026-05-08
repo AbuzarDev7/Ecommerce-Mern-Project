@@ -17,6 +17,16 @@ const useProductStore = create((set) => ({
     }
   },
 
+  fetchMyProducts: async () => {
+    set({ loading: true });
+    try {
+      const { data } = await api.get('/products/my');
+      set({ products: data, loading: false });
+    } catch (err) {
+      set({ error: 'Failed to fetch your products', loading: false });
+    }
+  },
+
   fetchProductById: async (id) => {
     set({ loading: true });
     try {

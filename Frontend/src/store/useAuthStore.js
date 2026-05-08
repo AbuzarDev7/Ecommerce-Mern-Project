@@ -12,6 +12,7 @@ const useAuthStore = create((set) => ({
     try {
       const { data } = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data));
       set({ user: data, token: data.token, loading: false });
       return data;
     } catch (err) {
@@ -24,8 +25,7 @@ const useAuthStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await api.post('/auth/register', userData);
-      localStorage.setItem('token', data.token);
-      set({ user: data, token: data.token, loading: false });
+      set({ loading: false });
       return data;
     } catch (err) {
       set({ error: err.response?.data?.message || 'Registration failed', loading: false });
@@ -35,7 +35,10 @@ const useAuthStore = create((set) => ({
 
   logout: () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('cart');
     set({ user: null, token: null });
+    window.location.href = '/login';
   },
 
   getMe: async () => {
@@ -47,6 +50,17 @@ const useAuthStore = create((set) => ({
     } catch (err) {
       localStorage.removeItem('token');
       set({ user: null, token: null, loading: false });
+    }
+  },
+  forgotPassword: async (email) => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await api.post('/auth/forgotpassword', { email });
+      set({ loading: false });
+      return data;
+    } catch (err) {
+      set({ error: err.response?.data?.message || 'Failed to send reset email', loading: false });
+      throw err;
     }
   },
 }));
