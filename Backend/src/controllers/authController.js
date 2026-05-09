@@ -3,9 +3,9 @@ const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('express-async-handler');
 
-// @desc    Register new user
+
 // @route   POST /api/auth/register
-// @access  Public
+
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, role } = req.body;
 
@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (user) {
         // Send welcome email
         const message = `Welcome to our Ecommerce platform, ${user.name}! Your account has been successfully created.`;
-        
+
         try {
             await sendEmail({
                 email: user.email,
@@ -64,9 +64,9 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Authenticate a user
+
 // @route   POST /api/auth/login
-// @access  Public
+
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
@@ -85,17 +85,17 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Get user data
+
 // @route   GET /api/auth/me
-// @access  Private
+
 const getMe = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     res.status(200).json(user);
 });
 
-// @desc    Logout user / clear cookie
+
 // @route   GET /api/auth/logout
-// @access  Private
+
 const logout = asyncHandler(async (req, res) => {
     res.cookie('token', 'none', {
         expires: new Date(Date.now() + 10 * 1000),
@@ -132,9 +132,9 @@ const sendTokenResponse = (user, statusCode, res) => {
         });
 };
 
-// @desc    Forgot password
+
 // @route   POST /api/auth/forgotpassword
-// @access  Public
+
 const forgotPassword = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
 
@@ -162,9 +162,22 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
         res.status(200).json({ success: true, data: 'Email sent' });
     } catch (err) {
+        // SIMULATION MODE: If email fails, we still allow testing locally
+        console.log('--- PASSWORD RESET SIMULATION ---');
+        console.log(`Email to: ${user.email}`);
+        console.log(`Reset Link: ${resetUrl}`);
+        console.log('---------------------------------');
+
+        if (process.env.NODE_ENV === 'development') {
+            return res.status(200).json({
+                success: true,
+                data: 'Email sent (Simulation Mode)',
+                devLink: resetUrl // Sending link to frontend for easy testing in dev
+            });
+        }
+
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
-
         await user.save({ validateBeforeSave: false });
 
         res.status(500);
@@ -172,9 +185,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Reset password
+
 // @route   PUT /api/auth/resetpassword/:resettoken
-// @access  Public
+
 const resetPassword = asyncHandler(async (req, res) => {
     // Get hashed token
     const resetPasswordToken = require('crypto')

@@ -1,25 +1,25 @@
 const Product = require('../models/Product');
 const asyncHandler = require('express-async-handler');
 
-// @desc    Fetch all products
+
 // @route   GET /api/products
-// @access  Public
+
 const getProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({});
     res.json(products);
 });
 
-// @desc    Fetch products by logged in user
+
 // @route   GET /api/products/my
-// @access  Private/Admin
+
 const getMyProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({ user: req.user._id });
     res.json(products);
 });
 
-// @desc    Fetch single product
+
 // @route   GET /api/products/:id
-// @access  Public
+
 const getProductById = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
@@ -51,7 +51,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
     const { title, price, description, category, stock } = req.body;
-    
+
     // Get image URL from Cloudinary (Multer-Cloudinary adds 'path' to req.file)
     const imageUrl = req.file ? req.file.path : req.body.imageUrl;
 
@@ -74,9 +74,8 @@ const createProduct = asyncHandler(async (req, res) => {
     res.status(201).json(createdProduct);
 });
 
-// @desc    Update a product
 // @route   PUT /api/products/:id
-// @access  Private/Admin
+
 const updateProduct = asyncHandler(async (req, res) => {
     const { title, price, description, imageUrl, category, stock } = req.body;
 

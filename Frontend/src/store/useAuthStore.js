@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import api from '../api';
+import { auth } from '../firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const useAuthStore = create((set) => ({
   user: null,
@@ -55,11 +57,10 @@ const useAuthStore = create((set) => ({
   forgotPassword: async (email) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await api.post('/auth/forgotpassword', { email });
+      await sendPasswordResetEmail(auth, email);
       set({ loading: false });
-      return data;
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Failed to send reset email', loading: false });
+      set({ error: err.message || 'Failed to send reset email', loading: false });
       throw err;
     }
   },

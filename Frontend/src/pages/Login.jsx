@@ -75,7 +75,7 @@ const Login = () => {
               <input type="checkbox" className="w-4 h-4 rounded border-neutral-300 text-brand focus:ring-brand" />
               <span className="text-neutral-600">Remember me</span>
             </label>
-            <a href="#" className="text-brand font-semibold hover:underline">Forgot password?</a>
+            <button type="button" onClick={() => navigate('/forgot-password')} className="text-brand font-semibold hover:underline">Forgot password?</button>
           </div>
 
           <button

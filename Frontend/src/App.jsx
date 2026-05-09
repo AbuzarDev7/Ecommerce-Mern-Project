@@ -10,6 +10,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Categories from './pages/Categories';
 import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
 import useAuthStore from './store/useAuthStore';
 import useCartStore from './store/useCartStore';
 
@@ -62,6 +63,7 @@ function App() {
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           </Routes>
