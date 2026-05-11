@@ -1,73 +1,81 @@
 import React from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <div className="relative overflow-hidden bg-neutral-900 py-24 sm:py-32">
-      {/* Decorative blobs */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-brand/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-light/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3"></div>
-
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand-light text-xs font-semibold mb-6">
-              <Sparkles className="w-3 h-3" />
-              <span>New Collection 2024</span>
-            </div>
-            <h1 className="text-5xl sm:text-7xl font-bold text-white tracking-tight leading-tight">
-              Redefining <br />
-              <span className="bg-gradient-to-r from-brand to-brand-light bg-clip-text text-transparent">Modern Elegance</span>
-            </h1>
-            <p className="mt-6 text-lg text-neutral-400 max-w-lg">
-              Discover our curated collection of premium essentials designed for those who appreciate the finer things in life. Quality meets craftsmanship.
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <button className="px-8 py-4 rounded-full bg-brand text-white font-semibold hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 flex items-center gap-2 group">
-                Shop Collection
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="px-8 py-4 rounded-full border border-neutral-700 text-white font-semibold hover:bg-neutral-800 transition-all">
-                View Lookbook
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="relative"
-          >
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-neutral-800">
-               <img 
-                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=800" 
-                alt="Hero" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* Float badge */}
-            <div className="absolute -bottom-6 -left-6 glass p-6 rounded-2xl border border-white/10 hidden sm:block animate-bounce-slow">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-xl">
-                  4.9
-                </div>
-                <div>
-                  <p className="text-white font-semibold">Top Rated</p>
-                  <p className="text-neutral-400 text-sm">By 20k+ Customers</p>
-                </div>
+    <div className="relative min-h-screen bg-[#F9F9F9] flex items-center pt-20">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 w-full">
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Text Content */}
+          <div className="lg:col-span-5 z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="text-[11px] font-black uppercase tracking-[0.4em] text-neutral-400 mb-6 block">
+                Collection 2024
+              </span>
+              <h1 className="text-7xl sm:text-8xl font-black text-neutral-900 leading-[0.9] tracking-tighter mb-10">
+                The Art of <br /> 
+                <span className="text-neutral-300 italic font-medium">Restraint</span>
+              </h1>
+              <p className="text-lg text-neutral-500 max-w-sm leading-relaxed mb-12">
+                A study in minimalism and high-quality materials. Curated essentials for the discerning individual.
+              </p>
+              <div className="flex items-center gap-10">
+                <Link to="/shop" className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-900 border-b-2 border-neutral-900 pb-2 hover:text-neutral-400 hover:border-neutral-400 transition-all">
+                  Shop Collection
+                </Link>
+                <Link to="/about" className="text-[11px] font-black uppercase tracking-[0.3em] text-neutral-400 hover:text-neutral-900 transition-all">
+                  Our Story
+                </Link>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
+
+          {/* Image Content */}
+          <div className="lg:col-span-7 relative h-[70vh] sm:h-[85vh]">
+            <motion.div
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full h-full"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200" 
+                alt="Editorial" 
+                className="w-full h-full object-cover grayscale-[0.2] contrast-[1.1]"
+              />
+            </motion.div>
+            
+            {/* Minimalist Overlay Badge */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1, duration: 1 }}
+              className="absolute -bottom-10 -left-10 bg-white p-12 hidden lg:block shadow-2xl"
+            >
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300 mb-2">Philosophy</p>
+              <p className="text-2xl font-bold text-neutral-900 max-w-[200px] leading-tight tracking-tighter">
+                Quality is the only sustainable luxury.
+              </p>
+            </motion.div>
+          </div>
+
+        </div>
+      </div>
+      
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-10 left-10 hidden lg:block">
+        <div className="flex flex-col items-center gap-4">
+           <span className="text-[9px] font-bold uppercase tracking-[0.5em] text-neutral-300 rotate-90 mb-8">Scroll</span>
+           <div className="w-[1px] h-20 bg-neutral-200"></div>
         </div>
       </div>
     </div>
   );
 };
-
 export default Hero;

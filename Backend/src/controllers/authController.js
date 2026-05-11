@@ -7,7 +7,7 @@ const asyncHandler = require('express-async-handler');
 // @route   POST /api/auth/register
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phoneNumber } = req.body;
 
     if (!name || !email || !password) {
         res.status(400);
@@ -30,7 +30,9 @@ const registerUser = asyncHandler(async (req, res) => {
         name,
         email,
         password,
-        role: role || 'user'
+        role: role || 'user',
+        phoneNumber: phoneNumber || '',
+        isVerified: true // Everyone is verified by default now
     });
 
     if (user) {
@@ -128,6 +130,7 @@ const sendTokenResponse = (user, statusCode, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            isVerified: user.isVerified,
             token
         });
 };

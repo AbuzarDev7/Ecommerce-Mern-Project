@@ -26,6 +26,18 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
+    idCard: {
+        type: String,
+        default: ''
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    phoneNumber: {
+        type: String,
+        default: ''
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date
 }, {

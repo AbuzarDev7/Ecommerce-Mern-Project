@@ -15,9 +15,15 @@ const getCart = asyncHandler(async (req, res) => {
 
 
 const updateCart = asyncHandler(async (req, res) => {
+    if (req.user.role === 'admin') {
+        res.status(403);
+        throw new Error('Admins are not allowed to perform this action');
+    }
+
     const { cartItems } = req.body;
 
     let cart = await Cart.findOne({ user: req.user._id });
+
 
     if (cart) {
         // Update existing cart

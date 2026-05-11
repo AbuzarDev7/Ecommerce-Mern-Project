@@ -13,6 +13,8 @@ import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import useAuthStore from './store/useAuthStore';
 import useCartStore from './store/useCartStore';
+import Footer from './components/Footer';
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -33,7 +35,6 @@ const AdminRoute = ({ children }) => {
 };
 
 // Placeholder components for other routes
-const Shop = () => <div className="p-20 text-center text-4xl font-bold text-neutral-800">Shop Page Coming Soon</div>;
 
 function App() {
   const { getMe, user } = useAuthStore();
@@ -57,8 +58,6 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/categories" element={<Categories />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
@@ -68,13 +67,9 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           </Routes>
         </main>
-        <footer className="bg-white border-t border-neutral-200 py-12">
-          <div className="max-w-7xl mx-auto px-6 text-center text-neutral-500">
-            <p className="text-xl font-bold text-neutral-900 mb-4">LUXE</p>
-            <p>© 2024 LUXE E-commerce. All rights reserved.</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
+
     </Router>
   );
 }

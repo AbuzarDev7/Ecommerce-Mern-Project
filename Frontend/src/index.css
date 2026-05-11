@@ -1,10 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #aa3bff;
-  --color-brand-light: #c084fc;
-  --color-brand-dark: #7e22ce;
+  --color-brand: #171717;
+  --color-brand-light: #404040;
+  --color-brand-dark: #000000;
+  --color-accent: #c5a35d; /* Subtle gold for luxury feel */
 }
+
 
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;

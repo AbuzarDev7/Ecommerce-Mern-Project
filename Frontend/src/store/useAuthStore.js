@@ -23,10 +23,12 @@ const useAuthStore = create((set) => ({
     }
   },
 
-  register: async (userData) => {
+  register: async (formData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await api.post('/auth/register', userData);
+      const { data } = await api.post('/auth/register', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       set({ loading: false });
       return data;
     } catch (err) {

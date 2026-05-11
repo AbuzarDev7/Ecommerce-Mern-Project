@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
 
 
@@ -37,13 +38,19 @@ const getProductById = asyncHandler(async (req, res) => {
 const deleteProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
-    if (product) {
-        await product.deleteOne();
-        res.json({ message: 'Product removed' });
-    } else {
+    if (!product) {
         res.status(404);
         throw new Error('Product not found');
     }
+
+    // Only the owner admin can delete their own product
+    if (product.user.toString() !== req.user._id.toString()) {
+        res.status(403);
+        throw new Error('You can only delete your own products');
+    }
+
+    await product.deleteOne();
+    res.json({ message: 'Product removed' });
 });
 
 // @desc    Create a product

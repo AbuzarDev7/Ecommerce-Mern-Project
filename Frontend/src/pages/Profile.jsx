@@ -5,8 +5,11 @@ import api from '../api';
 import { User, Package, Mail, Calendar, ChevronRight, LogOut, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import useProductStore from '../store/useProductStore';
+
 const Profile = () => {
   const { user, logout, forgotPassword } = useAuthStore();
+  const { products, fetchMyProducts, loading: productsLoading } = useProductStore();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [resetLoading, setResetLoading] = useState(false);
@@ -26,21 +29,27 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const { data } = await api.get('/orders/myorders');
-        setOrders(data);
+        if (user.role === 'admin') {
+          await fetchMyProducts();
+        } else {
+          const { data } = await api.get('/orders/myorders');
+          setOrders(data);
+        }
       } catch (err) {
-        console.error('Failed to fetch orders');
+        console.error('Failed to fetch data');
       } finally {
         setLoading(false);
       }
     };
 
     if (user) {
-      fetchOrders();
+      fetchData();
     }
-  }, [user]);
+  }, [user, fetchMyProducts]);
+
 
   if (!user) return null;
 
@@ -63,6 +72,13 @@ const Profile = () => {
                 {user.role} Account
               </span>
             </div>
+
+            {user.phoneNumber && (
+              <div className="mb-8 py-3 px-4 bg-neutral-50 rounded-2xl border border-neutral-100">
+                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mb-1">Phone Number</p>
+                <p className="text-sm font-bold text-neutral-800">{user.phoneNumber}</p>
+              </div>
+            )}
 
             <button 
               onClick={logout}
@@ -97,17 +113,43 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Order History */}
+        {/* History / Products Section */}
         <div className="lg:col-span-2">
           <h2 className="text-3xl font-bold text-neutral-900 mb-8 flex items-center gap-3">
-            <Package className="w-8 h-8 text-brand" />
-            Order History
+            {user.role === 'admin' ? <ShieldCheck className="w-8 h-8 text-brand" /> : <Package className="w-8 h-8 text-brand" />}
+            {user.role === 'admin' ? 'My Uploaded Products' : 'Order History'}
           </h2>
 
           {loading ? (
             <div className="flex justify-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand"></div>
             </div>
+          ) : user.role === 'admin' ? (
+            products.length > 0 ? (
+              <div className="grid sm:grid-cols-2 gap-6">
+                {products.map((p) => (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    key={p._id} 
+                    className="glass rounded-3xl p-6 border border-neutral-100 flex gap-4 items-center"
+                  >
+                    <img src={p.imageUrl} className="w-20 h-20 rounded-2xl object-cover" alt="" />
+                    <div>
+                      <h4 className="font-bold text-neutral-900 line-clamp-1">{p.title}</h4>
+                      <p className="text-sm text-brand font-bold">${p.price}</p>
+                      <p className="text-[10px] text-neutral-400 uppercase tracking-widest mt-1">Stock: {p.stock}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-neutral-50 rounded-[3rem] border border-dashed border-neutral-200">
+                <Package className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-neutral-800">No products uploaded</h3>
+                <p className="text-neutral-500">Go to Dashboard to upload your first product.</p>
+              </div>
+            )
           ) : orders.length > 0 ? (
             <div className="space-y-6">
               {orders.map((order) => (
@@ -162,6 +204,7 @@ const Profile = () => {
               <p className="text-neutral-500">When you purchase something, it will appear here.</p>
             </div>
           )}
+
         </div>
       </div>
     </div>

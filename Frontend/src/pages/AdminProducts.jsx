@@ -85,13 +85,16 @@ const AdminProducts = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="flex justify-between items-center mb-10">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
         <div>
           <h1 className="text-4xl font-bold text-neutral-900">Admin Inventory</h1>
           <p className="text-neutral-500 mt-2">Manage your luxury collection</p>
         </div>
         <button 
-          onClick={() => { resetForm(); setShowModal(true); }}
+          onClick={() => { 
+            resetForm(); 
+            setShowModal(true); 
+          }}
           className="px-6 py-3 bg-brand text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-brand-dark transition-all shadow-lg shadow-brand/20"
         >
           <Plus className="w-5 h-5" />

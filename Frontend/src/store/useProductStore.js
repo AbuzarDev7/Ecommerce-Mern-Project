@@ -8,7 +8,7 @@ const useProductStore = create((set) => ({
   error: null,
 
   fetchProducts: async () => {
-    set({ loading: true });
+    set({ loading: true, products: [] }); // Clear products before fetching
     try {
       const { data } = await api.get('/products');
       set({ products: data, loading: false });
@@ -18,7 +18,7 @@ const useProductStore = create((set) => ({
   },
 
   fetchMyProducts: async () => {
-    set({ loading: true });
+    set({ loading: true, products: [] }); // Clear products before fetching
     try {
       const { data } = await api.get('/products/my');
       set({ products: data, loading: false });

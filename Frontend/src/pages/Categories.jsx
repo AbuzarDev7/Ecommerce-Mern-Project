@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import useProductStore from '../store/useProductStore';
 import ProductCard from '../components/ProductCard';
+import ProductQuickView from '../components/ProductQuickView';
 import { motion, AnimatePresence } from 'framer-motion';
+
 import { LayoutGrid, ListFilter, Tag } from 'lucide-react';
 
 const Categories = () => {
   const { products, fetchProducts, loading } = useProductStore();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewProduct = (id) => {
+    setSelectedProductId(id);
+    setIsModalOpen(true);
+  };
+
 
   useEffect(() => {
     fetchProducts();
@@ -62,7 +72,8 @@ const Categories = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
               >
-                <ProductCard product={product} />
+               <ProductCard product={product} onView={() => handleViewProduct(product._id)} />
+
               </motion.div>
             ))}
           </AnimatePresence>
@@ -76,7 +87,13 @@ const Categories = () => {
           <p className="text-neutral-500">We couldn't find any products in the {activeCategory} category.</p>
         </div>
       )}
+      <ProductQuickView 
+        productId={selectedProductId} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
+
   );
 };
 
