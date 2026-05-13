@@ -62,7 +62,8 @@ const Checkout = () => {
       setIsSuccess(true);
       toast.success('Payment Successful!');
     } catch (err) {
-      toast.error('Order creation failed');
+      // Show specific backend error (e.g. insufficient stock)
+      toast.error(err.response?.data?.message || 'Order creation failed');
       setIsProcessing(false);
     }
   };

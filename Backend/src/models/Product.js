@@ -27,6 +27,10 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Please add stock quantity'],
         default: 0
     },
+    soldStock: {
+        type: Number,
+        default: 0
+    },
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',

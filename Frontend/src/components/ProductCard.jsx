@@ -8,14 +8,15 @@ import toast from 'react-hot-toast';
 
 const ProductCard = ({ product, onView }) => {
   const { addToCart } = useCartStore();
-
   const { user } = useAuthStore();
   const navigate = useNavigate();
+
+  const isOutOfStock = product.stock === 0;
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!user) {
       toast.error('Please login to add items to cart');
       navigate('/login');
@@ -30,51 +31,66 @@ const ProductCard = ({ product, onView }) => {
       return;
     }
 
+    if (isOutOfStock) {
+      toast.error('This item is out of stock!');
+      return;
+    }
 
     addToCart(product);
     toast.success(`${product.title} added to cart!`, {
-      style: {
-        borderRadius: '10px',
-        background: '#333',
-        color: '#fff',
-      },
+      style: { borderRadius: '10px', background: '#333', color: '#fff' },
     });
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       className="group cursor-pointer"
       onClick={onView}
     >
-
       {/* Product Image */}
       <div className="aspect-[3/4] overflow-hidden bg-neutral-100 relative mb-6">
-        <img 
-          src={product.imageUrl || 'https://via.placeholder.com/300?text=No+Image'} 
-          alt={product.title} 
-          className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-in-out"
+        <img
+          src={product.imageUrl || 'https://via.placeholder.com/300?text=No+Image'}
+          alt={product.title}
+          className={`w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-60' : 'grayscale-[0.2] group-hover:grayscale-0'}`}
         />
-        
-        {/* Subtle Quick Add */}
+
+        {/* Out of Stock Badge */}
+        {isOutOfStock && (
+          <div className="absolute top-3 left-3 bg-red-600 text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full z-10">
+            Out of Stock
+          </div>
+        )}
+
+        {/* Quick Add / Out of Stock Button */}
         <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-20">
-          <button 
-            onClick={handleAddToCart}
-            className="w-full py-4 bg-neutral-900 text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-neutral-800 transition-all"
-          >
-            Quick Add
-          </button>
+          {isOutOfStock ? (
+            <button
+              disabled
+              onClick={(e) => e.stopPropagation()}
+              className="w-full py-4 bg-neutral-400 text-white text-[10px] font-black uppercase tracking-[0.2em] cursor-not-allowed"
+            >
+              Out of Stock
+            </button>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className="w-full py-4 bg-neutral-900 text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-neutral-800 transition-all"
+            >
+              Quick Add
+            </button>
+          )}
         </div>
-        
-        <button 
-          onClick={(e) => e.stopPropagation()} 
+
+        <button
+          onClick={(e) => e.stopPropagation()}
           className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 transition-colors z-10 opacity-0 group-hover:opacity-100 duration-500"
         >
           <Heart className="w-5 h-5" />
         </button>
-
       </div>
 
       {/* Product Info */}
@@ -92,8 +108,6 @@ const ProductCard = ({ product, onView }) => {
         </p>
       </div>
     </motion.div>
-
-
   );
 };
 

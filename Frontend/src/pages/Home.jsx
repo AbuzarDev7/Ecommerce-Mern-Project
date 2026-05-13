@@ -80,7 +80,7 @@ const Home = () => {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-24">
             {products.length > 0 ? (
-              products.slice(0, 4).map((product) => (
+              products.map((product) => (
                 <ProductCard
                   key={product._id}
                   product={product}

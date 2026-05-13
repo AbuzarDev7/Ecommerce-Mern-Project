@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../store/useAuthStore';
 import api from '../api';
-import { User, Package, Mail, Calendar, ChevronRight, LogOut, ShieldCheck } from 'lucide-react';
+import { User, Package, Mail, Calendar, ChevronRight, LogOut, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import useProductStore from '../store/useProductStore';
@@ -166,9 +166,15 @@ const Profile = () => {
                     </div>
                     <div className="md:text-right">
                       <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-1">Status</p>
-                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
-                        {order.isPaid ? 'Paid & Confirmed' : 'Processing'}
-                      </span>
+                      {order.isDelivered ? (
+                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center gap-1 w-fit ml-auto">
+                          <CheckCircle className="w-3 h-3" /> Delivered
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold flex items-center gap-1 w-fit ml-auto">
+                          <Clock className="w-3 h-3" /> Processing
+                        </span>
+                      )}
                     </div>
                   </div>
 

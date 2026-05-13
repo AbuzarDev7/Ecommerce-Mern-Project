@@ -89,6 +89,10 @@ const AdminProducts = () => {
         <div>
           <h1 className="text-4xl font-bold text-neutral-900">Admin Inventory</h1>
           <p className="text-neutral-500 mt-2">Manage your luxury collection</p>
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-xl font-semibold">
+            <span className="text-sm uppercase tracking-wider">Total Earnings:</span>
+            <span className="text-xl">${products.reduce((acc, p) => acc + (p.price * (p.soldStock || 0)), 0).toFixed(2)}</span>
+          </div>
         </div>
         <button 
           onClick={() => { 
@@ -110,6 +114,8 @@ const AdminProducts = () => {
               <th className="px-6 py-4 text-sm font-bold text-neutral-600 uppercase tracking-wider">Category</th>
               <th className="px-6 py-4 text-sm font-bold text-neutral-600 uppercase tracking-wider">Price</th>
               <th className="px-6 py-4 text-sm font-bold text-neutral-600 uppercase tracking-wider">Stock</th>
+              <th className="px-6 py-4 text-sm font-bold text-neutral-600 uppercase tracking-wider">Sold</th>
+              <th className="px-6 py-4 text-sm font-bold text-neutral-600 uppercase tracking-wider">Earnings</th>
               <th className="px-6 py-4 text-sm font-bold text-neutral-600 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
@@ -129,6 +135,8 @@ const AdminProducts = () => {
                     {product.stock} in stock
                   </span>
                 </td>
+                <td className="px-6 py-4 font-bold text-neutral-700">{product.soldStock || 0}</td>
+                <td className="px-6 py-4 font-bold text-green-600">${((product.soldStock || 0) * product.price).toFixed(2)}</td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-2">
                     <button className="p-2 text-neutral-400 hover:text-brand transition-colors"><Edit className="w-5 h-5" /></button>
